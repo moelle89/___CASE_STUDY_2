@@ -5,37 +5,37 @@
    },
    "videos": [
       {
-         "src": "media/01.mp4",
+         "src": "media/01.webm",
          "title": "Morning Ride",
          "desc": "A calm drive through misty streets.\n30s clip, loopable."
       },
       {
-         "src": "media/02.mp4",
+         "src": "media/02.webm",
          "title": "City Lights",
          "desc": "Neon reflections and rainy pavements."
       },
       {
-         "src": "media/03.mp4",
+         "src": "media/03.webm",
          "title": "Street Beats",
          "desc": "Quick cuts to match the rhythm.\nGreat for promos."
       },
       {
-         "src": "media/04.mp4",
+         "src": "media/04.webm",
          "title": "Portrait Flow",
          "desc": "Slow-motion portrait clips, soft bokeh."
       },
       {
-         "src": "media/05.mp4",
+         "src": "media/05.webm",
          "title": "Aerial Drift",
          "desc": "Drone footage above the coastline."
       },
       {
-         "src": "media/06.mp4",
+         "src": "media/06.webm",
          "title": "Forest Walk",
          "desc": "Sunlight through trees, natural ambience."
       },
       {
-         "src": "media/07.mp4",
+         "src": "media/07.webm",
          "title": "Night Market",
          "desc": "Warm lights, people and motion."
       }
