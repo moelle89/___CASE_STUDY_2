@@ -1,0 +1,43 @@
+{
+   "page": {
+      "title": "ITNT GROUP CASE STUDY — Showcase",
+      "subtitle": "A fancy grid of vertical (1080×1920) videos with parallax, animated entrance and a cursor-attached info box. Click any card to open and play in a lightbox."
+   },
+   "videos": [
+      {
+         "src": "media/01.mp4",
+         "title": "Morning Ride",
+         "desc": "A calm drive through misty streets.\n30s clip, loopable."
+      },
+      {
+         "src": "media/02.mp4",
+         "title": "City Lights",
+         "desc": "Neon reflections and rainy pavements."
+      },
+      {
+         "src": "media/03.mp4",
+         "title": "Street Beats",
+         "desc": "Quick cuts to match the rhythm.\nGreat for promos."
+      },
+      {
+         "src": "media/04.mp4",
+         "title": "Portrait Flow",
+         "desc": "Slow-motion portrait clips, soft bokeh."
+      },
+      {
+         "src": "media/05.mp4",
+         "title": "Aerial Drift",
+         "desc": "Drone footage above the coastline."
+      },
+      {
+         "src": "media/06.mp4",
+         "title": "Forest Walk",
+         "desc": "Sunlight through trees, natural ambience."
+      },
+      {
+         "src": "media/07.mp4",
+         "title": "Night Market",
+         "desc": "Warm lights, people and motion."
+      }
+   ]
+}
