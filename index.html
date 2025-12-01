@@ -69,7 +69,7 @@
     .card {
       background: var(--card-bg);
       border-radius: 20px;
-      aspect-ratio: 12/16;
+      aspect-ratio: 9/16;
       position: relative;
       cursor: pointer;
       opacity: 0;
@@ -299,11 +299,19 @@
       const panel = document.getElementById('lbPanel');
 
       function openLightbox(src, cardElement) {
-        cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        const isMobile = window.innerWidth <= 800;
+        const scrollDelay = isMobile ? 300 : 400;
+
+        cardElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'center'
+        });
+
         setTimeout(() => {
           panel.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
           lb.classList.add('open');
-        }, 400);
+        }, scrollDelay);
       }
       lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
       function closeLightbox() { lb.classList.remove('open'); panel.innerHTML = ''; }
