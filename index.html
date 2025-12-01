@@ -604,6 +604,13 @@
         const thumbVideo = card.querySelector('video');
         if (thumbVideo) {
           thumbVideo.src = v.src;
+          // Set thumbnail to middle of video
+          thumbVideo.addEventListener('loadedmetadata', () => {
+            if (thumbVideo.duration) {
+              thumbVideo.currentTime = thumbVideo.duration * 0.5;
+              thumbVideo.pause(); // Ensure it stays paused at the middle frame
+            }
+          });
         }
 
         card.addEventListener('click', () => openLightbox(v.src, v.title, v.desc, card));
