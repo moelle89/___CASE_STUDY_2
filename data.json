@@ -6,38 +6,38 @@
    "videos": [
       {
          "src": "media/01.webm",
-         "title": "Morning Ride",
-         "desc": "A calm drive through misty streets.\n30s clip, loopable."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 01"
       },
       {
          "src": "media/02.webm",
-         "title": "City Lights",
-         "desc": "Neon reflections and rainy pavements."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 02"
       },
       {
          "src": "media/03.webm",
-         "title": "Street Beats",
-         "desc": "Quick cuts to match the rhythm.\nGreat for promos."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 03"
       },
       {
          "src": "media/04.webm",
-         "title": "Portrait Flow",
-         "desc": "Slow-motion portrait clips, soft bokeh."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 04"
       },
       {
          "src": "media/05.webm",
-         "title": "Aerial Drift",
-         "desc": "Drone footage above the coastline."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 05"
       },
       {
          "src": "media/06.webm",
-         "title": "Forest Walk",
-         "desc": "Sunlight through trees, natural ambience."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 06"
       },
       {
          "src": "media/07.webm",
-         "title": "Night Market",
-         "desc": "Warm lights, people and motion."
+         "title": "modehaus wagener",
+         "desc": "fashion reel 07"
       }
    ]
 }
