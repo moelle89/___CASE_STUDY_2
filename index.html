@@ -8,12 +8,26 @@
   <style>
     :root {
       --bg: #0f1115;
+      --bg-alt: #161922;
+      --bg-gradient: linear-gradient(0deg, #0f1115 0%, #161922 100%);
       --card-bg: rgba(255, 255, 255, 0.03);
       --accent: #ffd45c;
       --text: #ebf0f7;
       --muted: #adb0b7;
+      --tooltip-bg: rgba(0, 0, 0, 0.75);
       --gap: 26px;
       --max-width: 1320px;
+    }
+
+    body[data-theme='light'] {
+      --bg: #f4f6fb;
+      --bg-alt: #ffffff;
+      --bg-gradient: linear-gradient(0deg, #f4f6fb 0%, #ffffff 100%);
+      --card-bg: rgba(0, 0, 0, 0.04);
+      --accent: #2563eb;
+      --text: #111827;
+      --muted: #4b5563;
+      --tooltip-bg: rgba(255, 255, 255, 0.92);
     }
 
     * {
@@ -23,11 +37,12 @@
     body {
       margin: 0;
       font-family: Inter, system-ui;
-      background: linear-gradient(0deg, #0f1115 0%, #161922 100%);
+      background: var(--bg-gradient);
       color: var(--text);
       padding: 60px 30px;
       display: flex;
       justify-content: center;
+      transition: background .3s ease, color .3s ease;
     }
 
     .container {
@@ -71,13 +86,66 @@
       flex-shrink: 0;
       display: flex;
       align-items: flex-start;
-      justify-content: flex-end;
+      justify-content: flex-start;
     }
 
     .logo-wrap img,
     .logo-wrap svg {
       width: min(210px, 26vw);
       height: auto;
+      transition: filter .3s ease;
+    }
+
+    body[data-theme='light'] .logo-wrap img,
+    body[data-theme='light'] .logo-wrap svg {
+      filter: invert(1);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 26px;
+      right: 28px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255, 255, 255, 0.18);
+      color: inherit;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 10px 25px rgba(15, 17, 21, 0.35);
+      transition: transform .2s ease, background .2s ease, color .2s ease;
+      z-index: 999;
+    }
+
+    .theme-toggle__icon {
+      width: 28px;
+      height: 28px;
+      display: block;
+    }
+
+    .theme-toggle__icon svg,
+    .theme-toggle__icon img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .theme-toggle:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    body[data-theme='light'] .theme-toggle {
+      background: rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 20px rgba(15, 17, 21, 0.15);
+    }
+
+    body[data-theme='light'] .theme-toggle:hover {
+      background: rgb(212 212 212 / 80%);
     }
 
     .grid {
@@ -153,7 +221,7 @@
         z-index: 1000;
         display: none;
         max-width: 300px;
-        background: rgba(0, 0, 0, 0.75);
+        background: var(--tooltip-bg);
         padding: 16px 18px;
         border-radius: 14px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
@@ -175,7 +243,7 @@
 
     /* lightbox */
 
-    .lightbox {
+      .lightbox {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.7);
@@ -367,11 +435,16 @@
     #loaderOverlay {
       position: fixed;
       inset: 0;
-      background: #0f1115;
+      background: var(--bg);
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 2000;
+    }
+
+    body[data-theme='light'] #loaderContainer svg {
+      filter: invert(1);
+      transition: filter .3s ease;
     }
 
     #loaderOverlay.hidden {
@@ -387,7 +460,12 @@
   </style>
 </head>
 
-<body>
+<body data-theme="dark">
+  <button id="themeToggle" class="theme-toggle" type="button" aria-pressed="false" aria-label="Toggle theme">
+    <span class="theme-toggle__icon" aria-hidden="true">
+      <img src="assets/sun.svg" alt="" />
+    </span>
+  </button>
   <div id="loaderOverlay">
     <div id="loaderContainer"></div>
   </div>
@@ -418,6 +496,56 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
   <script>
     (async function () {
+      /* theme toggle */
+      const themeToggle = document.getElementById('themeToggle');
+      const themePrefKey = 'preferred-theme';
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const updateToggleContent = (theme) => {
+        if (!themeToggle) return;
+        const iconEl = themeToggle.querySelector('.theme-toggle__icon');
+        const isDark = theme === 'dark';
+        themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+        themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        if (iconEl) {
+          const img = iconEl.querySelector('img');
+          if (img) {
+            // Show sun icon when in dark mode (to switch to light), moon icon when in light mode (to switch to dark)
+            img.src = isDark ? 'assets/sun.svg' : 'assets/moon.svg';
+          }
+        }
+      };
+
+      const applyTheme = (theme, { persist = true } = {}) => {
+        const nextTheme = theme === 'light' ? 'light' : 'dark';
+        document.body.dataset.theme = nextTheme;
+        updateToggleContent(nextTheme);
+        if (persist) {
+          localStorage.setItem(themePrefKey, nextTheme);
+        }
+      };
+
+      const savedTheme = localStorage.getItem(themePrefKey);
+      const initialTheme = savedTheme || (prefersDark.matches ? 'dark' : 'light');
+      applyTheme(initialTheme, { persist: Boolean(savedTheme) });
+
+      themeToggle?.addEventListener('click', () => {
+        const current = document.body.dataset.theme === 'light' ? 'light' : 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        applyTheme(next);
+      });
+
+      const handlePrefersChange = (event) => {
+        if (localStorage.getItem(themePrefKey)) return;
+        applyTheme(event.matches ? 'dark' : 'light', { persist: false });
+      };
+
+      if (prefersDark.addEventListener) {
+        prefersDark.addEventListener('change', handlePrefersChange);
+      } else if (prefersDark.addListener) {
+        prefersDark.addListener(handlePrefersChange);
+      }
+
       /* lottie loader */
       const loaderOverlay = document.getElementById('loaderOverlay');
       const loaderContainer = document.getElementById('loaderContainer');
