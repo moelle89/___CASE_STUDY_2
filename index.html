@@ -314,6 +314,11 @@
         <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>`;
 
+        const thumbVideo = card.querySelector('video');
+        if (thumbVideo) {
+          thumbVideo.src = v.src;
+        }
+
         card.addEventListener('click', () => openLightbox(v.src, card));
         grid.appendChild(card);
       });
@@ -324,8 +329,6 @@
         entries.forEach(e => {
           if (e.isIntersecting) {
             e.target.classList.add('revealed');
-            const vid = e.target.querySelector('video');
-            if (vid && !vid.src) vid.src = e.target.dataset.src;
           }
         });
       }, { threshold: .2 });
