@@ -1,87 +1,217 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Fancy Vertical Video Grid</title>
   <style>
-    :root{
-      --bg:#0f1115;
-      --card-bg: rgba(255,255,255,0.03);
+    :root {
+      --bg: #0f1115;
+      --card-bg: rgba(255, 255, 255, 0.03);
       --accent: #ffd45c;
       --text: #e6eef8;
       --muted: #9aa6bf;
       --gap: 26px;
       --max-width: 1320px;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter, system-ui;
-      background:linear-gradient(0deg,#0c0e11 0%, #161922 100%);
-      color:var(--text);
-      padding:60px 30px;
-      display:flex;
-      justify-content:center;
+
+    * {
+      box-sizing: border-box
     }
-    .container{width:100%; max-width:var(--max-width)}
 
-    header{text-align:center; margin-bottom:70px; opacity:0; transform:translateY(18px); transition:all .7s ease}
-    header.revealed{opacity:1; transform:translateY(0)}
-    h1{font-size:clamp(32px,4.8vw,60px); margin: 0 24px; font-weight:700;}
-    p.lead{margin-top:24px; color:var(--muted); font-size:clamp(16px,1.8vw,20px)}
-
-    .grid{display:grid; grid-template-columns:repeat(4,1fr); gap:var(--gap)}
-
-    .card{
-      background:var(--card-bg);
-      border-radius:20px;
-      aspect-ratio:9/16;
-      position:relative;
-      cursor:pointer;
-      opacity:0; transform:translateY(20px);
-      transition:opacity .6s var(--t-delay), transform .6s var(--t-delay);
+    body {
+      margin: 0;
+      font-family: Inter, system-ui;
+      background: linear-gradient(0deg, #0c0e11 0%, #161922 100%);
+      color: var(--text);
+      padding: 60px 30px;
+      display: flex;
+      justify-content: center;
     }
-    .card.revealed{opacity:1; transform:translateY(0)}
 
-    .video-wrap{position:absolute; inset:0; overflow:hidden; border-radius:20px}
-    .video-wrap video{width:100%; height:100%; object-fit:cover}
-
-    .parallax-layer{position:absolute; inset:0; background:linear-gradient(180deg,transparent,rgba(0,0,0,.2))}
-
-    .play-overlay{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:78px; height:78px; border-radius:82px;
-      background:rgba(255,255,255,0.12); backdrop-filter:blur(8px);
-      display:grid; place-items:center; transition:transform .2s ease;
+    .container {
+      width: 100%;
+      max-width: var(--max-width)
     }
-    .play-overlay svg{width:34px; fill:white}
-    .card:hover .play-overlay{transform:translate(-50%,-50%) scale(1.08)}
+
+    header {
+      text-align: center;
+      margin-bottom: 70px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: all .7s ease
+    }
+
+    header.revealed {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    h1 {
+      font-size: clamp(32px, 4.8vw, 60px);
+      margin: 0 24px;
+      font-weight: 700;
+    }
+
+    p.lead {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: clamp(16px, 1.8vw, 20px)
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--gap)
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      aspect-ratio: 9/16;
+      position: relative;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .6s var(--t-delay), transform .6s var(--t-delay);
+    }
+
+    .card.revealed {
+      opacity: 1;
+      transform: translateY(0)
+    }
+
+    .video-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      border-radius: 20px
+    }
+
+    .video-wrap video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover
+    }
+
+    .parallax-layer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .2))
+    }
+
+    .play-overlay {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 78px;
+      height: 78px;
+      border-radius: 82px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      display: grid;
+      place-items: center;
+      transition: transform .2s ease;
+    }
+
+    .play-overlay svg {
+      width: 34px;
+      fill: white
+    }
+
+    .card:hover .play-overlay {
+      transform: translate(-50%, -50%) scale(1.08)
+    }
 
     /* tooltip */
-      @media(min-width:1100px){
-      #cursor-tooltip{position:fixed; pointer-events:none; z-index:1000; display:none; max-width:300px;
-        background:rgba(0,0,0,0.75); padding:16px 18px; border-radius:14px;
-        box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-      #cursor-tooltip .ttl{font-size:18px; font-weight:600; margin-bottom:6px}
-      #cursor-tooltip .sub{font-size:14px; line-height:1.4; color:var(--muted); white-space:pre-wrap}
+    @media(min-width:1100px) {
+      #cursor-tooltip {
+        position: fixed;
+        pointer-events: none;
+        z-index: 1000;
+        display: none;
+        max-width: 300px;
+        background: rgba(0, 0, 0, 0.75);
+        padding: 16px 18px;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
+      }
+
+      #cursor-tooltip .ttl {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 6px
+      }
+
+      #cursor-tooltip .sub {
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--muted);
+        white-space: pre-wrap
+      }
     }
+
     /* lightbox */
 
-    .lightbox{position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; justify-content:center; align-items:center;
-      opacity:0; pointer-events:none; transition:opacity .35s ease}
-    .lightbox.open{opacity:1; pointer-events:auto}
-    .panel{max-height:80vh; border-radius:14px; overflow:hidden; transform:scale(.92);
-      transition:transform .35s ease}
-    .lightbox.open .panel{transform:scale(1)}
-    .panel video{width:100%; height:100%; max-height:80vh; object-fit:contain}
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .35s ease
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: auto
+    }
+
+    .panel {
+      max-height: 80vh;
+      border-radius: 14px;
+      overflow: hidden;
+      transform: scale(.92);
+      transition: transform .35s ease
+    }
+
+    .lightbox.open .panel {
+      transform: scale(1)
+    }
+
+    .panel video {
+      width: 100%;
+      height: 100%;
+      max-height: 80vh;
+      object-fit: contain
+    }
 
     /* responsive */
-    @media(max-width:1100px){.grid{grid-template-columns:repeat(3,1fr)}}
-    @media(max-width:800px){.grid{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:480px){.grid{grid-template-columns:1fr}}
+    @media(max-width:1100px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr)
+      }
+    }
+
+    @media(max-width:800px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:480px) {
+      .grid {
+        grid-template-columns: 1fr
+      }
+    }
   </style>
 </head>
+
 <body>
   <div class="container">
     <header id="pageHeader">
@@ -92,88 +222,95 @@
     <section class="grid" id="videoGrid"></section>
   </div>
 
-  <div id="cursor-tooltip"><div class="ttl"></div><div class="sub"></div></div>
+  <div id="cursor-tooltip">
+    <div class="ttl"></div>
+    <div class="sub"></div>
+  </div>
 
   <div class="lightbox" id="lightbox">
     <div class="panel" id="lbPanel"></div>
   </div>
 
-<script>
-(async function(){
-  const res = await fetch('data.json');
-  const data = await res.json();
+  <script>
+    (async function () {
+      const res = await fetch('data.json');
+      const data = await res.json();
 
-  const header = document.getElementById('pageHeader');
-  document.getElementById('mainTitle').textContent = data.page.title;
-  document.getElementById('mainSub').textContent = data.page.subtitle;
+      const header = document.getElementById('pageHeader');
+      document.getElementById('mainTitle').textContent = data.page.title;
+      document.getElementById('mainSub').textContent = data.page.subtitle;
 
-  const grid = document.getElementById('videoGrid');
-  data.videos.forEach((v,i)=>{
-    const card=document.createElement('div');
-    card.className='card';
-    card.style.setProperty('--t-delay', `${0.15 + i*0.07}s`);
-    card.dataset.title=v.title;
-    card.dataset.desc=v.desc;
-    card.dataset.src=v.src;
+      const grid = document.getElementById('videoGrid');
+      data.videos.forEach((v, i) => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.style.setProperty('--t-delay', `${0.15 + i * 0.07}s`);
+        card.dataset.title = v.title;
+        card.dataset.desc = v.desc;
+        card.dataset.src = v.src;
 
-    card.innerHTML = `
+        card.innerHTML = `
       <div class="video-wrap">
         <video muted loop preload="metadata"></video>
         <div class="parallax-layer"></div>
         <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>`;
 
-    card.addEventListener('click',()=> openLightbox(v.src));
-    grid.appendChild(card);
-  });
+        card.addEventListener('click', () => openLightbox(v.src, card));
+        grid.appendChild(card);
+      });
 
-  /* reveal */
-  const revealObs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting){
-        e.target.classList.add('revealed');
-        const vid=e.target.querySelector('video');
-        if(vid && !vid.src) vid.src=e.target.dataset.src;
+      /* reveal */
+      const revealObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed');
+            const vid = e.target.querySelector('video');
+            if (vid && !vid.src) vid.src = e.target.dataset.src;
+          }
+        });
+      }, { threshold: .2 });
+
+      revealObs.observe(header);
+      document.querySelectorAll('.card').forEach(c => revealObs.observe(c));
+
+      /* tooltip */
+      const tooltip = document.getElementById('cursor-tooltip');
+      document.querySelectorAll('.card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          tooltip.style.display = 'block';
+          tooltip.querySelector('.ttl').textContent = card.dataset.title;
+          tooltip.querySelector('.sub').textContent = card.dataset.desc;
+        });
+        card.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+        card.addEventListener('mousemove', (e) => {
+          const rect = tooltip.getBoundingClientRect();
+          let x = e.clientX + 20;
+          let y = e.clientY + 20;
+          if (x + rect.width > innerWidth) x = e.clientX - rect.width - 20;
+          if (y + rect.height > innerHeight) y = e.clientY - rect.height - 20;
+          tooltip.style.left = x + 'px';
+          tooltip.style.top = y + 'px';
+        });
+      });
+
+      /* lightbox */
+      const lb = document.getElementById('lightbox');
+      const panel = document.getElementById('lbPanel');
+
+      function openLightbox(src, cardElement) {
+        cardElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => {
+          panel.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
+          lb.classList.add('open');
+        }, 400);
       }
-    });
-  },{threshold:.2});
+      lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+      function closeLightbox() { lb.classList.remove('open'); panel.innerHTML = ''; }
+      document.addEventListener('keydown', (e) => e.key === 'Escape' && closeLightbox());
 
-  revealObs.observe(header);
-  document.querySelectorAll('.card').forEach(c=> revealObs.observe(c));
-
-  /* tooltip */
-  const tooltip=document.getElementById('cursor-tooltip');
-  document.querySelectorAll('.card').forEach(card=>{
-    card.addEventListener('mouseenter',()=>{
-      tooltip.style.display='block';
-      tooltip.querySelector('.ttl').textContent=card.dataset.title;
-      tooltip.querySelector('.sub').textContent=card.dataset.desc;
-    });
-    card.addEventListener('mouseleave',()=> tooltip.style.display='none');
-    card.addEventListener('mousemove',(e)=>{
-      const rect=tooltip.getBoundingClientRect();
-      let x=e.clientX+20;
-      let y=e.clientY+20;
-      if(x+rect.width>innerWidth) x=e.clientX-rect.width-20;
-      if(y+rect.height>innerHeight) y=e.clientY-rect.height-20;
-      tooltip.style.left=x+'px';
-      tooltip.style.top=y+'px';
-    });
-  });
-
-  /* lightbox */
-  const lb=document.getElementById('lightbox');
-  const panel=document.getElementById('lbPanel');
-
-  function openLightbox(src){
-    panel.innerHTML=`<video src="${src}" controls autoplay playsinline></video>`;
-    lb.classList.add('open');
-  }
-  lb.addEventListener('click',(e)=>{if(e.target===lb) closeLightbox();});
-  function closeLightbox(){ lb.classList.remove('open'); panel.innerHTML=''; }
-  document.addEventListener('keydown',(e)=> e.key==='Escape' && closeLightbox());
-
-})();
-</script>
+    })();
+  </script>
 </body>
+
 </html>
