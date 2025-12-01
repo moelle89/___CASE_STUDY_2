@@ -209,10 +209,36 @@
         grid-template-columns: 1fr
       }
     }
+
+    /* lottie fullscreen loader */
+    #loaderOverlay {
+      position: fixed;
+      inset: 0;
+      background: #02030a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+    }
+
+    #loaderOverlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .4s ease;
+    }
+
+    #loaderContainer {
+      width: min(350px, 70vw);
+      height: min(350px, 70vw);
+    }
   </style>
 </head>
 
 <body>
+  <div id="loaderOverlay">
+    <div id="loaderContainer"></div>
+  </div>
+
   <div class="container">
     <header id="pageHeader">
       <h1 id="mainTitle"></h1>
@@ -231,8 +257,31 @@
     <div class="panel" id="lbPanel"></div>
   </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
   <script>
     (async function () {
+      /* lottie loader */
+      const loaderOverlay = document.getElementById('loaderOverlay');
+      const loaderContainer = document.getElementById('loaderContainer');
+
+      if (window.lottie && loaderContainer) {
+        window.lottie.loadAnimation({
+          container: loaderContainer,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          path: 'assets/wings_loader.json'
+        });
+      }
+
+      // hide loader after 2s
+      setTimeout(() => {
+        if (!loaderOverlay) return;
+        loaderOverlay.classList.add('hidden');
+        // fully remove from DOM after transition
+        setTimeout(() => loaderOverlay.remove(), 450);
+      }, 1150);
+
       const res = await fetch('data.json');
       const data = await res.json();
 
@@ -301,6 +350,7 @@
       /* lightbox */
       const lb = document.getElementById('lightbox');
       const panel = document.getElementById('lbPanel');
+      let previousBodyOverflow = '';
 
       function openLightbox(src, cardElement) {
         const isMobile = window.innerWidth <= 800;
@@ -315,10 +365,18 @@
         setTimeout(() => {
           panel.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
           lb.classList.add('open');
+          // prevent page scrolling while lightbox is open
+          previousBodyOverflow = document.body.style.overflow;
+          document.body.style.overflow = 'hidden';
         }, scrollDelay);
       }
       lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
-      function closeLightbox() { lb.classList.remove('open'); panel.innerHTML = ''; }
+      function closeLightbox() {
+        lb.classList.remove('open');
+        panel.innerHTML = '';
+        // restore previous scroll behavior
+        document.body.style.overflow = previousBodyOverflow;
+      }
       document.addEventListener('keydown', (e) => e.key === 'Escape' && closeLightbox());
 
     })();
