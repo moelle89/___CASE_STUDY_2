@@ -6,38 +6,53 @@
    "videos": [
       {
          "src": "media/01.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 01"
       },
       {
          "src": "media/02.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 02"
       },
       {
          "src": "media/03.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 03"
       },
       {
          "src": "media/04.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 04"
       },
       {
          "src": "media/05.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 05"
       },
       {
          "src": "media/06.webm",
-         "title": "modehaus wagener",
+         "title": "Modehaus Wagener",
          "desc": "fashion reel 06"
       },
       {
          "src": "media/07.webm",
          "title": "Impression",
          "desc": "impression 01"
+      },
+      {
+         "src": "media/08.webm",
+         "title": "Bones Hands",
+         "desc": "Product Promotion | Berry Bites"
+      },
+      {
+         "src": "media/09.webm",
+         "title": "Bones Hands",
+         "desc": "Product Promotion | Joint Powder"
+      },
+      {
+         "src": "media/10.webm",
+         "title": "Bones Hands",
+         "desc": "Product Promotion | Odor Remover"
       }
    ]
 }
