@@ -23,7 +23,7 @@
     body {
       margin: 0;
       font-family: Inter, system-ui;
-      background: linear-gradient(0deg, #0c0e11 0%, #161922 100%);
+      background: linear-gradient(0deg, #0f1115 0%, #161922 100%);
       color: var(--text);
       padding: 60px 30px;
       display: flex;
@@ -214,7 +214,7 @@
     #loaderOverlay {
       position: fixed;
       inset: 0;
-      background: #02030a;
+      background: #0f1115;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -264,6 +264,9 @@
       const loaderOverlay = document.getElementById('loaderOverlay');
       const loaderContainer = document.getElementById('loaderContainer');
 
+      let loaderDoneResolve;
+      const loaderDone = new Promise((resolve) => { loaderDoneResolve = resolve; });
+
       if (window.lottie && loaderContainer) {
         window.lottie.loadAnimation({
           container: loaderContainer,
@@ -274,12 +277,18 @@
         });
       }
 
-      // hide loader after 2s
+      // hide loader after a brief delay
       setTimeout(() => {
-        if (!loaderOverlay) return;
+        if (!loaderOverlay) {
+          loaderDoneResolve();
+          return;
+        }
         loaderOverlay.classList.add('hidden');
-        // fully remove from DOM after transition
-        setTimeout(() => loaderOverlay.remove(), 450);
+        // fully remove from DOM after transition, then signal done
+        setTimeout(() => {
+          loaderOverlay.remove();
+          loaderDoneResolve();
+        }, 450);
       }, 1150);
 
       const res = await fetch('data.json');
@@ -310,6 +319,7 @@
       });
 
       /* reveal */
+      await loaderDone;
       const revealObs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
