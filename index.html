@@ -10,8 +10,8 @@
       --bg: #0f1115;
       --card-bg: rgba(255, 255, 255, 0.03);
       --accent: #ffd45c;
-      --text: #e6eef8;
-      --muted: #9aa6bf;
+      --text: #ebf0f7;
+      --muted: #adb0b7;
       --gap: 26px;
       --max-width: 1320px;
     }
@@ -88,7 +88,7 @@
 
     .card {
       background: var(--card-bg);
-      border-radius: 20px;
+      border-radius: 15px;
       aspect-ratio: 12/16;
       position: relative;
       cursor: pointer;
@@ -106,7 +106,7 @@
       position: absolute;
       inset: 0;
       overflow: hidden;
-      border-radius: 20px
+      border-radius: 15px
     }
 
     .video-wrap video {
@@ -208,7 +208,123 @@
       width: 100%;
       height: 100%;
       max-height: 80vh;
-      object-fit: contain
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity .4s ease .1s;
+    }
+
+    .lightbox.open .panel video {
+      opacity: 1;
+    }
+
+    /* mobile lightbox styles */
+    @media(max-width:800px) {
+      .lightbox {
+        background: var(--bg);
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .panel {
+        max-height: none;
+        height: 100vh;
+        border-radius: 0;
+        transform: none;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+      }
+
+      .lightbox.open .panel {
+        transform: none;
+      }
+
+      .panel .video-container {
+        width: 100%;
+        height: 80vh;
+        position: relative;
+        background: #000;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity .6s ease .1s, transform .6s ease .1s;
+      }
+
+      .panel.revealed .video-container {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .panel .video-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        max-height: none;
+      }
+
+      .panel .close-btn {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(8px);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        transition: background .2s ease, opacity .4s ease .2s, transform .4s ease .2s;
+        opacity: 0;
+        transform: scale(0.8);
+      }
+
+      .panel.revealed .close-btn {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      .panel .close-btn:hover {
+        background: rgba(0, 0, 0, 0.8);
+      }
+
+      .panel .close-btn svg {
+        width: 24px;
+        height: 24px;
+        fill: white;
+      }
+
+      .panel .video-info {
+        height: 20vh;
+        background: var(--bg);
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity .6s ease .2s, transform .6s ease .2s;
+      }
+
+      .panel.revealed .video-info {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .panel .video-info .info-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: var(--text);
+      }
+
+      .panel .video-info .info-desc {
+        font-size: 16px;
+        color: var(--muted);
+        line-height: 1.4;
+      }
     }
 
     /* responsive */
@@ -361,7 +477,7 @@
           thumbVideo.src = v.src;
         }
 
-        card.addEventListener('click', () => openLightbox(v.src, card));
+        card.addEventListener('click', () => openLightbox(v.src, v.title, v.desc, card));
         grid.appendChild(card);
       });
 
@@ -407,7 +523,7 @@
       const panel = document.getElementById('lbPanel');
       let previousBodyOverflow = '';
 
-      function openLightbox(src, cardElement) {
+      function openLightbox(src, title, desc, cardElement) {
         const isMobile = window.innerWidth <= 800;
         const scrollDelay = isMobile ? 300 : 400;
 
@@ -418,7 +534,33 @@
         });
 
         setTimeout(() => {
-          panel.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
+          if (isMobile) {
+            panel.innerHTML = `
+              <div class="video-container">
+                <button class="close-btn" aria-label="Close">
+                  <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+                </button>
+                <video src="${src}" controls autoplay playsinline></video>
+              </div>
+              <div class="video-info">
+                <div class="info-title">${title}</div>
+                <div class="info-desc">${desc}</div>
+              </div>
+            `;
+            // Add close button event listener
+            const closeBtn = panel.querySelector('.close-btn');
+            if (closeBtn) {
+              closeBtn.addEventListener('click', closeLightbox);
+            }
+            // Trigger fade-in animation after DOM is ready
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                panel.classList.add('revealed');
+              });
+            });
+          } else {
+            panel.innerHTML = `<video src="${src}" controls autoplay playsinline></video>`;
+          }
           lb.classList.add('open');
           // prevent page scrolling while lightbox is open
           previousBodyOverflow = document.body.style.overflow;
@@ -427,8 +569,12 @@
       }
       lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
       function closeLightbox() {
+        panel.classList.remove('revealed');
         lb.classList.remove('open');
-        panel.innerHTML = '';
+        // Wait for transition before clearing content
+        setTimeout(() => {
+          panel.innerHTML = '';
+        }, 600);
         // restore previous scroll behavior
         document.body.style.overflow = previousBodyOverflow;
       }
