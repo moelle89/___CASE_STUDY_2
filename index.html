@@ -238,6 +238,10 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
       }
 
+      .lightbox.open~#cursor-tooltip {
+        z-index: 2000;
+      }
+
       #cursor-tooltip .ttl {
         font-size: 18px;
         font-weight: 600;
@@ -250,22 +254,25 @@
         color: var(--muted);
         white-space: pre-wrap
       }
+
       .ttl .label {
-        font-weight: 300; /* light */
+        font-weight: 300;
+        /* light */
       }
 
       .ttl .value {
-        font-weight: 700; /* bold */
+        font-weight: 700;
+        /* bold */
       }
     }
 
     /* lightbox */
 
-      .lightbox {
+    .lightbox {
       position: fixed;
       inset: 0;
       background: rgba(0, 0, 0, 0.7);
-      backdrop-filter:blur(15px);
+      backdrop-filter: blur(15px);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -409,11 +416,13 @@
       }
 
       .info-title .label {
-        font-weight: 300;   /* light */
+        font-weight: 300;
+        /* light */
       }
 
       .info-title .value {
-        font-weight: 700;   /* bold */
+        font-weight: 700;
+        /* bold */
       }
 
       .panel .video-info .info-desc {
@@ -458,20 +467,26 @@
       body {
         padding: 40px 30px;
       }
+
       .grid {
         grid-template-columns: repeat(2, 1fr)
       }
-      .play-overlay{
+
+      .play-overlay {
         height: 60px;
         width: 60px;
       }
+
       h1 {
         letter-spacing: -3px;
       }
-      .logo-wrap img, .logo-wrap svg {
+
+      .logo-wrap img,
+      .logo-wrap svg {
         width: min(210px, 32vw);
       }
-      header{
+
+      header {
         margin-bottom: 50px;
       }
     }
@@ -502,6 +517,90 @@
       width: min(350px, 70vw);
       height: min(350px, 70vw);
     }
+
+    /* CTA Section */
+    .cta-section {
+      margin-top: 120px;
+      padding: 80px 40px;
+      text-align: center;
+      background: var(--bg);
+      border-radius: 20px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity .8s ease, transform .8s ease;
+    }
+
+    .cta-section.revealed {
+      opacity: 1;
+      transform: translateY(0);
+      transition-delay: 1.5s;
+    }
+
+    .cta-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 600;
+      letter-spacing: -2px;
+      margin: 0 0 20px 0;
+      line-height: 1.2;
+    }
+
+    .cta-subtitle {
+      font-size: clamp(15px, 1.6vw, 18px);
+      color: var(--muted);
+      margin: 0 0 40px 0;
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .cta-button {
+      display: inline-block;
+      padding: 18px 48px;
+      background: linear-gradient(0deg, #dda13e 0%, #d17600 100%);
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 600;
+      transition: transform .3s ease, box-shadow .3s ease;
+      box-shadow: 0 10px 30px rgba(245, 166, 35, 0.3);
+    }
+
+    .cta-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(245, 166, 35, 0.4);
+    }
+
+    .cta-button:active {
+      transform: translateY(-1px);
+    }
+
+    @media(max-width:800px) {
+      .cta-section {
+        margin-top: 80px;
+        padding: 60px 30px;
+        border-radius: 15px;
+      }
+
+      .cta-title {
+        letter-spacing: -1.5px;
+      }
+
+      .cta-button {
+        padding: 16px 40px;
+        font-size: 16px;
+      }
+    }
+
+    @media(max-width:480px) {
+      .cta-section {
+        margin-top: 60px;
+        padding: 50px 25px;
+      }
+
+      .cta-subtitle br {
+        display: none;
+      }
+    }
   </style>
 </head>
 
@@ -527,15 +626,19 @@
     </header>
 
     <section class="grid" id="videoGrid"></section>
-  </div>
 
+    <section class="cta-section" id="ctaSection">
+      <h2 class="cta-title">Bereit für den nächsten Schritt<br>Richtung Erfolg?</h2>
+      <p class="cta-subtitle">Unzählige Klienten mit über 5.000 angebundenen Marketingkanälen<br>vertrauen auf unsere Expertise</p>
+      <a href="#contact" class="cta-button">Jetzt durchstarten</a>
+    </section>
+  </div>
+  <div class="lightbox" id="lightbox">
+    <div class="panel" id="lbPanel"></div>
+  </div>
   <div id="cursor-tooltip">
     <div class="ttl"></div>
     <div class="sub"></div>
-  </div>
-
-  <div class="lightbox" id="lightbox">
-    <div class="panel" id="lbPanel"></div>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
@@ -596,7 +699,7 @@
       const loaderContainer = document.getElementById('loaderContainer');
 
       let loaderDoneResolve;
-      const loaderDone = new Promise((resolve) => { loaderDoneResolve = resolve; });
+
 
       if (window.lottie && loaderContainer) {
         window.lottie.loadAnimation({
@@ -610,16 +713,11 @@
 
       // hide loader after a brief delay
       setTimeout(() => {
-        if (!loaderOverlay) {
-          loaderDoneResolve();
-          return;
-        }
         loaderOverlay.classList.add('hidden');
         // fully remove from DOM after transition, then signal done
         setTimeout(() => {
           loaderOverlay.remove();
-          loaderDoneResolve();
-        }, 750);
+        }, 900);
       }, 1000);
 
       const res = await fetch('data.json');
@@ -677,7 +775,7 @@
       await Promise.all(thumbnailLoadPromises);
 
       /* reveal */
-      await loaderDone;
+
       const revealObs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
@@ -689,9 +787,16 @@
       revealObs.observe(header);
       document.querySelectorAll('.card').forEach(c => revealObs.observe(c));
 
+      // Observe CTA section
+      const ctaSection = document.getElementById('ctaSection');
+      if (ctaSection) {
+        revealObs.observe(ctaSection);
+      }
+
       /* tooltip */
       const tooltip = document.getElementById('cursor-tooltip');
       const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      let currentLightboxCard = null;
 
       if (!isTouchDevice) {
         document.querySelectorAll('.card').forEach(card => {
@@ -703,7 +808,12 @@
               '</span>';
             tooltip.querySelector('.sub').textContent = card.dataset.desc;
           });
-          card.addEventListener('mouseleave', () => tooltip.style.display = 'none');
+          card.addEventListener('mouseleave', () => {
+            // Don't hide tooltip if lightbox is open for this card
+            if (currentLightboxCard !== card) {
+              tooltip.style.display = 'none';
+            }
+          });
           card.addEventListener('mousemove', (e) => {
             const rect = tooltip.getBoundingClientRect();
             let x = e.clientX + 20;
@@ -713,6 +823,19 @@
             tooltip.style.left = x + 'px';
             tooltip.style.top = y + 'px';
           });
+        });
+
+        // Track mouse movement globally to position tooltip when lightbox is open
+        document.addEventListener('mousemove', (e) => {
+          if (currentLightboxCard && tooltip.style.display === 'block') {
+            const rect = tooltip.getBoundingClientRect();
+            let x = e.clientX + 20;
+            let y = e.clientY + 20;
+            if (x + rect.width > innerWidth) x = e.clientX - rect.width - 20;
+            if (y + rect.height > innerHeight) y = e.clientY - rect.height - 20;
+            tooltip.style.left = x + 'px';
+            tooltip.style.top = y + 'px';
+          }
         });
       }
 
@@ -724,6 +847,13 @@
       function openLightbox(src, title, desc, cardElement) {
         const isMobile = window.innerWidth <= 800;
         const scrollDelay = isMobile ? 300 : 400;
+
+        // Store reference to the card for desktop tooltip
+        if (!isMobile && !isTouchDevice) {
+          currentLightboxCard = cardElement;
+          // Ensure tooltip stays visible
+          tooltip.style.display = 'block';
+        }
 
         cardElement.scrollIntoView({
           behavior: 'smooth',
@@ -775,6 +905,9 @@
         }, 600);
         // restore previous scroll behavior
         document.body.style.overflow = previousBodyOverflow;
+        // Clear current card reference and hide tooltip
+        currentLightboxCard = null;
+        tooltip.style.display = 'none';
       }
       document.addEventListener('keydown', (e) => e.key === 'Escape' && closeLightbox());
 
