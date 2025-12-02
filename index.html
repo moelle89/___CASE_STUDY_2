@@ -630,7 +630,7 @@
     <section class="cta-section" id="ctaSection">
       <h2 class="cta-title">Bereit für den nächsten Schritt<br>Richtung Erfolg?</h2>
       <p class="cta-subtitle">Unzählige Klienten mit über 5.000 angebundenen Marketingkanälen<br>vertrauen auf unsere Expertise</p>
-      <a href="#contact" class="cta-button">Jetzt durchstarten</a>
+      <a href="mailto:info@itnt.de" class="cta-button">Jetzt durchstarten</a>
     </section>
   </div>
   <div class="lightbox" id="lightbox">
@@ -699,7 +699,7 @@
       const loaderContainer = document.getElementById('loaderContainer');
 
       let loaderDoneResolve;
-
+      const loaderDone = new Promise((resolve) => { loaderDoneResolve = resolve; });
 
       if (window.lottie && loaderContainer) {
         window.lottie.loadAnimation({
@@ -713,11 +713,16 @@
 
       // hide loader after a brief delay
       setTimeout(() => {
+        if (!loaderOverlay) {
+          loaderDoneResolve();
+          return;
+        }
         loaderOverlay.classList.add('hidden');
         // fully remove from DOM after transition, then signal done
         setTimeout(() => {
           loaderOverlay.remove();
-        }, 900);
+          loaderDoneResolve();
+        }, 750);
       }, 1000);
 
       const res = await fetch('data.json');
@@ -775,7 +780,7 @@
       await Promise.all(thumbnailLoadPromises);
 
       /* reveal */
-
+      await loaderDone;
       const revealObs = new IntersectionObserver(entries => {
         entries.forEach(e => {
           if (e.isIntersecting) {
