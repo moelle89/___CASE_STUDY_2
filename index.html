@@ -621,6 +621,23 @@
         display: none;
       }
     }
+    /* CTA text reveal */
+    .cta-reveal .row span {
+      opacity: 0;
+      transform: translateY(4px);
+      display: inline-block;
+      transition: opacity .25s ease, transform .25s ease;
+    }
+
+    .cta-reveal .row span.animate {
+      opacity: 1;
+      transition-delay: 1.25s;
+      transform: translateY(0);
+    }
+
+    .cta-subtitle {
+      transition-delay: 2s!important;
+    }
   </style>
 </head>
 
@@ -648,8 +665,8 @@
     <section class="grid" id="videoGrid"></section>
 
     <section class="cta-section" id="ctaSection">
-      <h2 class="cta-title">Bereit für den nächsten Schritt<br>Richtung Erfolg?</h2>
-      <p class="cta-subtitle">Unzählige Klienten mit über 5.000 angebundenen Marketingkanälen<br>vertrauen auf unsere Expertise</p>
+      <h2 class="cta-title cta-reveal">Bereit für den nächsten Schritt<br>Richtung Erfolg?</h2>
+      <p class="cta-subtitle cta-reveal">Unzählige Klienten mit über 5.000 angebundenen Marketingkanälen<br>vertrauen auf unsere Expertise</p>
       <a href="mailto:sales@itnt.de" class="cta-button">Jetzt durchstarten</a>
     </section>
   </div>
@@ -764,7 +781,7 @@
       data.videos.forEach((v, i) => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.style.setProperty('--t-delay', `${0.25 + i * 0.07}s`);
+        card.style.setProperty('--t-delay', `${0.3 + i * 0.08}s`);
         card.dataset.title = v.title;
         card.dataset.desc = v.desc;
         card.dataset.src = v.src;
@@ -809,6 +826,19 @@
       const ctaSection = document.getElementById('ctaSection');
       if (ctaSection) {
         revealObs.observe(ctaSection);
+
+        // When CTA becomes visible → split & animate text
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => {
+            if (e.isIntersecting) {
+              initTextReveal();
+              animateTextReveal();
+              obs.disconnect(); // run once
+            }
+          });
+        }, { threshold: 0.2 });
+
+        obs.observe(ctaSection);
       }
 
       /* tooltip */
@@ -936,6 +966,44 @@
       document.addEventListener('keydown', (e) => e.key === 'Escape' && closeLightbox());
 
     })();
+
+  /* ------------------------------
+     CTA TEXT REVEAL EFFECT
+  --------------------------------*/
+  function initTextReveal() {
+    const targets = document.querySelectorAll('.cta-reveal');
+
+    targets.forEach(el => {
+      const html = el.innerHTML.trim();
+      const rows = html.split('<br>');
+
+      el.innerHTML = ''; // clear
+
+      rows.forEach(row => {
+        const rowEl = document.createElement('span');
+        rowEl.className = 'row';
+        el.appendChild(rowEl);
+
+        const letters = row.trim().split('');
+
+        letters.forEach(char => {
+          const span = document.createElement('span');
+          span.innerHTML = (char === ' ') ? '&nbsp;' : char;
+          rowEl.appendChild(span);
+        });
+      });
+    });
+  }
+
+  function animateTextReveal() {
+    const spans = document.querySelectorAll('.cta-reveal .row span');
+    spans.forEach((span, i) => {
+      setTimeout(() => {
+        span.classList.add('animate');
+      }, i * 15);
+    });
+  }
+
   </script>
 </body>
 
