@@ -63,6 +63,18 @@
          "thumb": "thumbs/10.webp",
          "title": "Bones Hands",
          "desc": "Product Promotion | Odor Remover"
+      },
+      {
+         "src": "media/11.webm",
+         "thumb": "thumbs/11.webp",
+         "title": "Bones Hands",
+         "desc": "Product Promotion | Care Spray"
+      },
+      {
+         "src": "media/12.webm",
+         "thumb": "thumbs/12.webp",
+         "title": "Bones Hands",
+         "desc": "Product Promotion | B12 Serum"
       }
    ]
 }
