@@ -68,6 +68,14 @@
 
     .header-text {
       max-width: 720px;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: all .8s ease .35s;
+    }
+
+    header.revealed .header-text {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     h1 {
@@ -163,8 +171,8 @@
       position: relative;
       cursor: pointer;
       opacity: 0;
-      transform: translateY(40px);
-      transition: opacity .6s var(--t-delay), transform .6s var(--t-delay);
+      transform: translateY(60px);
+      transition: opacity .8s var(--t-delay), transform .8s var(--t-delay);
     }
 
     .card.revealed {
@@ -606,7 +614,7 @@
       data.videos.forEach((v, i) => {
         const card = document.createElement('div');
         card.className = 'card';
-        card.style.setProperty('--t-delay', `${0.25 + i * 0.07}s`);
+        card.style.setProperty('--t-delay', `${0.3 + i * 0.08}s`);
         card.dataset.title = v.title;
         card.dataset.desc = v.desc;
         card.dataset.src = v.src;
