@@ -624,19 +624,19 @@
     /* CTA text reveal */
     .cta-reveal .row span {
       opacity: 0;
-      transform: translateY(4px);
+      transform: translateY(14px);
       display: inline-block;
-      transition: opacity .25s ease, transform .25s ease;
+      transition: opacity .65s ease, transform .65s ease;
     }
 
     .cta-reveal .row span.animate {
       opacity: 1;
-      transition-delay: 1.25s;
+      transition-delay: 1.75s;
       transform: translateY(0);
     }
 
     .cta-subtitle {
-      transition-delay: 2s!important;
+      transition-delay: 3s!important;
     }
   </style>
 </head>
@@ -984,12 +984,17 @@
         rowEl.className = 'row';
         el.appendChild(rowEl);
 
-        const letters = row.trim().split('');
+        const words = row.trim().split(' ');
 
-        letters.forEach(char => {
+        words.forEach((word, idx) => {
           const span = document.createElement('span');
-          span.innerHTML = (char === ' ') ? '&nbsp;' : char;
+          span.innerHTML = word;           // place the word
           rowEl.appendChild(span);
+
+          // Add back the space visually (but not as a revealable element)
+          if (idx < words.length - 1) {
+            rowEl.appendChild(document.createTextNode(' '));
+          }
         });
       });
     });
