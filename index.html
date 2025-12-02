@@ -73,7 +73,7 @@
     h1 {
       font-size: clamp(32px, 4.8vw, 60px);
       margin: 0 24px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     p.lead {
@@ -596,7 +596,7 @@
 
         card.innerHTML = `
       <div class="video-wrap">
-        <video muted loop preload="metadata"></video>
+        <video muted loop preload="metadata" playsinline></video>
         <div class="parallax-layer"></div>
         <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
       </div>`;
