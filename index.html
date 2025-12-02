@@ -612,6 +612,8 @@
       document.getElementById('mainSub').textContent = data.page.subtitle;
 
       const grid = document.getElementById('videoGrid');
+      const thumbnailLoadPromises = [];
+
       data.videos.forEach((v, i) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -629,19 +631,32 @@
 
         const thumbVideo = card.querySelector('video');
         if (thumbVideo) {
-          thumbVideo.src = v.src;
-          // Set thumbnail to middle of video
-          thumbVideo.addEventListener('loadedmetadata', () => {
-            if (thumbVideo.duration) {
-              thumbVideo.currentTime = thumbVideo.duration * 0.5;
-              thumbVideo.pause(); // Ensure it stays paused at the middle frame
-            }
+          // Create promise for this video thumbnail
+          const loadPromise = new Promise((resolve) => {
+            thumbVideo.src = v.src;
+            // Set thumbnail to middle of video
+            thumbVideo.addEventListener('loadedmetadata', () => {
+              if (thumbVideo.duration) {
+                thumbVideo.currentTime = thumbVideo.duration * 0.5;
+              }
+            });
+            // Resolve when seeked to the correct frame
+            thumbVideo.addEventListener('seeked', () => {
+              thumbVideo.pause();
+              resolve();
+            });
+            // Fallback timeout in case seeking fails
+            setTimeout(resolve, 3000);
           });
+          thumbnailLoadPromises.push(loadPromise);
         }
 
         card.addEventListener('click', () => openLightbox(v.src, v.title, v.desc, card));
         grid.appendChild(card);
       });
+
+      // Wait for all thumbnails to load
+      await Promise.all(thumbnailLoadPromises);
 
       /* reveal */
       await loaderDone;
