@@ -8,7 +8,7 @@
   <style>
     :root {
       --bg: #0f1115;
-      --bg-alt: #161922;
+      --bg-alt: #16181e;
       --bg-gradient: linear-gradient(0deg, #0f1115 0%, #16181e 100%);
       --card-bg: rgba(255, 255, 255, 0.03);
       --accent: #ffd45c;
@@ -37,7 +37,7 @@
     body {
       margin: 0;
       font-family: Inter, system-ui;
-      background: var(--bg-gradient);
+      background: var(--bg-alt);
       color: var(--text);
       padding: 60px 30px;
       display: flex;
@@ -70,7 +70,7 @@
       max-width: 720px;
       opacity: 0;
       transform: translateY(18px);
-      transition: all .8s ease .35s;
+      transition: transform .8s ease .35s, opacity .8s ease .35s;
     }
 
     header.revealed .header-text {
