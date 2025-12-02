@@ -171,7 +171,7 @@
       position: relative;
       cursor: pointer;
       opacity: 0;
-      transform: translateY(60px);
+      transform: translateY(40px);
       transition: opacity .8s var(--t-delay), transform .8s var(--t-delay);
       overflow: hidden;
     }
@@ -248,7 +248,7 @@
         backdrop-filter: blur(10px);
         padding: 16px 18px;
         border-radius: 14px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5)
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08)
       }
 
       .lightbox.open~#cursor-tooltip {
@@ -532,10 +532,10 @@
 
     /* Use fixed px but allow scaling */
     #loaderContainer {
-      width: 220px;
-      height: 220px;
-      max-width: 70%;
-      max-height: 70%;
+      width: 420px;
+      height: 420px;
+      max-width: 80%;
+      max-height: 80%;
     }
 
     /* CTA Section */
@@ -553,7 +553,7 @@
     .cta-section.revealed {
       opacity: 1;
       transform: translateY(0);
-      transition-delay: 1.5s;
+      transition-delay: 1.25s;
     }
 
     .cta-title {
