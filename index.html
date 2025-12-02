@@ -250,6 +250,13 @@
         color: var(--muted);
         white-space: pre-wrap
       }
+      .ttl .label {
+        font-weight: 300; /* light */
+      }
+
+      .ttl .value {
+        font-weight: 700; /* bold */
+      }
     }
 
     /* lightbox */
@@ -322,7 +329,7 @@
 
       .panel .video-container {
         width: 100%;
-        height: 85vh;
+        height: 75vh;
         position: relative;
         background: #000;
         opacity: 0;
@@ -378,12 +385,12 @@
       }
 
       .panel .video-info {
-        height: 15vh;
+        height: 25vh;
         background: var(--bg);
-        padding: 24px;
+        padding: 34px 28px;
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: start;
         opacity: 0;
         transform: translateY(20px);
         transition: opacity .6s ease .2s, transform .6s ease .2s;
@@ -399,6 +406,14 @@
         font-weight: 600;
         margin-bottom: 8px;
         color: var(--text);
+      }
+
+      .info-title .label {
+        font-weight: 300;   /* light */
+      }
+
+      .info-title .value {
+        font-weight: 700;   /* bold */
       }
 
       .panel .video-info .info-desc {
@@ -682,7 +697,10 @@
         document.querySelectorAll('.card').forEach(card => {
           card.addEventListener('mouseenter', () => {
             tooltip.style.display = 'block';
-            tooltip.querySelector('.ttl').textContent = card.dataset.title;
+            tooltip.querySelector('.ttl').innerHTML =
+              '<span class="label">Kunde:</span> <span class="value">' +
+              card.dataset.title +
+              '</span>';
             tooltip.querySelector('.sub').textContent = card.dataset.desc;
           });
           card.addEventListener('mouseleave', () => tooltip.style.display = 'none');
@@ -723,7 +741,7 @@
                 <video src="${src}" controls autoplay loop playsinline></video>
               </div>
               <div class="video-info">
-                <div class="info-title">${title}</div>
+                <div class="info-title"><span class="label">Kunde: </span><span class="value">${title}</span></div>
                 <div class="info-desc">${desc}</div>
               </div>
             `;
