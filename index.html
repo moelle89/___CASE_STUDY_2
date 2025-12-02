@@ -81,6 +81,7 @@
       margin: 12px 28px 0;
       color: var(--muted);
       font-size: clamp(16px, 1.8vw, 20px);
+      font-weight: 300;
     }
 
     .logo-wrap {
@@ -157,8 +158,8 @@
 
     .card {
       background: var(--card-bg);
-      border-radius: 15px;
-      aspect-ratio: 12/16;
+      border-radius: 10px;
+      aspect-ratio: 14/16;
       position: relative;
       cursor: pointer;
       opacity: 0;
@@ -175,7 +176,7 @@
       position: absolute;
       inset: 0;
       overflow: hidden;
-      border-radius: 15px
+      border-radius: 10px
     }
 
     .video-wrap video {
@@ -430,7 +431,14 @@
 
     @media(max-width:480px) {
       .grid {
-        grid-template-columns: 1fr
+        grid-template-columns: repeat(2, 1fr)
+      }
+      .play-overlay{
+        height: 60px;
+        width: 60px;
+      }
+      h1 {
+        letter-spacing: -3px;
       }
     }
 
