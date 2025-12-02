@@ -173,6 +173,7 @@
       opacity: 0;
       transform: translateY(60px);
       transition: opacity .8s var(--t-delay), transform .8s var(--t-delay);
+      overflow: hidden;
     }
 
     .card.revealed {
@@ -184,13 +185,25 @@
       position: absolute;
       inset: 0;
       overflow: hidden;
-      border-radius: 10px
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
     }
 
-    .video-wrap video {
+    /* thumbnail image */
+    .thumb-img {
       width: 100%;
       height: 100%;
-      object-fit: cover
+      object-fit: cover;
+      display: block;
+      transform-origin: center;
+      transition: transform .3s ease;
+    }
+
+    .card:hover .thumb-img {
+      transform: scale(1.03);
     }
 
     .parallax-layer {
@@ -257,12 +270,10 @@
 
       .ttl .label {
         font-weight: 300;
-        /* light */
       }
 
       .ttl .value {
         font-weight: 700;
-        /* bold */
       }
     }
 
@@ -417,12 +428,10 @@
 
       .info-title .label {
         font-weight: 300;
-        /* light */
       }
 
       .info-title .value {
         font-weight: 700;
-        /* bold */
       }
 
       .panel .video-info .info-desc {
@@ -500,6 +509,14 @@
       align-items: center;
       justify-content: center;
       z-index: 2000;
+      opacity: 0;
+      animation: loaderFadeIn .28s ease forwards;
+    }
+
+    @keyframes loaderFadeIn {
+      to {
+        opacity: 1;
+      }
     }
 
     body[data-theme='light'] #loaderContainer svg {
@@ -513,9 +530,12 @@
       transition: opacity .4s ease;
     }
 
+    /* Use fixed px but allow scaling */
     #loaderContainer {
-      width: min(350px, 70vw);
-      height: min(350px, 70vw);
+      width: 220px;
+      height: 220px;
+      max-width: 70%;
+      max-height: 70%;
     }
 
     /* CTA Section */
@@ -658,7 +678,6 @@
         if (iconEl) {
           const img = iconEl.querySelector('img');
           if (img) {
-            // Show sun icon when in dark mode (to switch to light), moon icon when in light mode (to switch to dark)
             img.src = isDark ? 'assets/sun.svg' : 'assets/moon.svg';
           }
         }
@@ -711,6 +730,13 @@
         });
       }
 
+      // Ensure lottie resizes on viewport change (good for mobile)
+      window.addEventListener('resize', () => {
+        if (window.lottie && typeof window.lottie.resize === 'function') {
+          try { window.lottie.resize(); } catch (e) { /* ignore */ }
+        }
+      });
+
       // hide loader after a brief delay
       setTimeout(() => {
         if (!loaderOverlay) {
@@ -733,8 +759,8 @@
       document.getElementById('mainSub').textContent = data.page.subtitle;
 
       const grid = document.getElementById('videoGrid');
-      const thumbnailLoadPromises = [];
 
+      /* Build cards using static thumbnails (preferred) */
       data.videos.forEach((v, i) => {
         const card = document.createElement('div');
         card.className = 'card';
@@ -743,41 +769,28 @@
         card.dataset.desc = v.desc;
         card.dataset.src = v.src;
 
-        card.innerHTML = `
-      <div class="video-wrap">
-        <video muted loop preload="metadata" playsinline></video>
-        <div class="parallax-layer"></div>
-        <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-      </div>`;
+        // Determine thumb path:
+        // Priority: v.thumb (if present in data.json)
+        // Fallback: derive from src - replace extension with .webp in ./thumbs/
+        const thumbPath = v.thumb
+          ? v.thumb
+          : (() => {
+            const srcName = (v.src || '').split('/').pop() || '';
+            const base = srcName.replace(/\.[^/.]+$/, "");
+            return `thumbs/${base}.webp`;
+          })();
 
-        const thumbVideo = card.querySelector('video');
-        if (thumbVideo) {
-          // Create promise for this video thumbnail
-          const loadPromise = new Promise((resolve) => {
-            thumbVideo.src = v.src;
-            // Set thumbnail to middle of video
-            thumbVideo.addEventListener('loadedmetadata', () => {
-              if (thumbVideo.duration) {
-                thumbVideo.currentTime = thumbVideo.duration * 0.5;
-              }
-            });
-            // Resolve when seeked to the correct frame
-            thumbVideo.addEventListener('seeked', () => {
-              thumbVideo.pause();
-              resolve();
-            });
-            // Fallback timeout in case seeking fails
-            setTimeout(resolve, 2000);
-          });
-          thumbnailLoadPromises.push(loadPromise);
-        }
+        // Build card markup with <img> for thumbnail
+        card.innerHTML = `
+          <div class="video-wrap" role="button" aria-label="${v.title}">
+            <img class="thumb-img" src="${thumbPath}" loading="lazy" alt="${v.title} thumbnail">
+            <div class="parallax-layer"></div>
+            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
+          </div>`;
 
         card.addEventListener('click', () => openLightbox(v.src, v.title, v.desc, card));
         grid.appendChild(card);
       });
-
-      // Wait for all thumbnails to load
-      await Promise.all(thumbnailLoadPromises);
 
       /* reveal */
       await loaderDone;
@@ -814,7 +827,6 @@
             tooltip.querySelector('.sub').textContent = card.dataset.desc;
           });
           card.addEventListener('mouseleave', () => {
-            // Don't hide tooltip if lightbox is open for this card
             if (currentLightboxCard !== card) {
               tooltip.style.display = 'none';
             }
@@ -853,13 +865,12 @@
         const isMobile = window.innerWidth <= 800;
         const scrollDelay = isMobile ? 300 : 400;
 
-        // Store reference to the card for desktop tooltip
         if (!isMobile && !isTouchDevice) {
           currentLightboxCard = cardElement;
-          // Ensure tooltip stays visible
           tooltip.style.display = 'block';
         }
 
+        // Smooth scroll then open
         cardElement.scrollIntoView({
           behavior: 'smooth',
           block: 'center',
@@ -880,18 +891,17 @@
                 <div class="info-desc">${desc}</div>
               </div>
             `;
-            // Add close button event listener
             const closeBtn = panel.querySelector('.close-btn');
             if (closeBtn) {
               closeBtn.addEventListener('click', closeLightbox);
             }
-            // Trigger fade-in animation after DOM is ready
             requestAnimationFrame(() => {
               requestAnimationFrame(() => {
                 panel.classList.add('revealed');
               });
             });
           } else {
+            // Desktop: create a single video element inside panel only when opened
             panel.innerHTML = `<video src="${src}" controls autoplay loop playsinline></video>`;
           }
           lb.classList.add('open');
@@ -906,6 +916,15 @@
         lb.classList.remove('open');
         // Wait for transition before clearing content
         setTimeout(() => {
+          // Stop and remove video to free memory/network
+          const vid = panel.querySelector('video');
+          if (vid) {
+            try {
+              vid.pause();
+              vid.removeAttribute('src');
+              vid.load();
+            } catch (err) { }
+          }
           panel.innerHTML = '';
         }, 600);
         // restore previous scroll behavior
